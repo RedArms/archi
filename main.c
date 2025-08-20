@@ -41,14 +41,39 @@ int main(int argc, char* argv[]) {
 
     //Initialize matrices and kernels
     float** matrix = nxn(n);
+    if (!matrix) {
+        fprintf(stderr, "Failed to allocate matrix.\n");
+        return 1;
+    }
     float** kernel = kxk(k);
+    if (!kernel) {
+        fprintf(stderr, "Failed to allocate kernel.\n");
+        free_matrix(matrix, n);
+        return 1;
+    }
 
     int out_size = n - k + 1;
-    
+
     // Allocation de la matrice de sortie
     float** output = malloc(out_size * sizeof(float*));
+    if (!output) {
+        fprintf(stderr, "Failed to allocate output matrix.\n");
+        free_matrix(matrix, n);
+        free_matrix(kernel, k);
+        return 1;
+    }
     for (int i = 0; i < out_size; i++) {
         output[i] = malloc(out_size * sizeof(float));
+        if (!output[i]) {
+            for (int j = 0; j < i; j++) {
+                free(output[j]);
+            }
+            free(output);
+            free_matrix(matrix, n);
+            free_matrix(kernel, k);
+            fprintf(stderr, "Failed to allocate output matrix.\n");
+            return 1;
+        }
     }
     clear_matrix(output, out_size);
 
