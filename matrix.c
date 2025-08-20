@@ -99,38 +99,34 @@ void convolve_col_major(float** matrix, float** kernel, float** output,
 void convolve_simd(float** matrix, float** kernel, float** output,
                    int k, int out_size){
     for (int i = 0; i < out_size; i++) {
-        for (int j = 0; j < out_size; j++) {
+        int j = 0;
 
+        // Traiter 8 colonnes de sortie en parallèle
+        for (; j <= out_size - 8; j += 8) {
             __m256 vec_sum = _mm256_setzero_ps();
-            float sum = 0.0f;
 
             for (int ki = 0; ki < k; ki++) {
-                int kj = 0;
-
-                // Charger et multiplier 8 éléments contigus à la fois
-                for (; kj <= k - 8; kj += 8) {
+                for (int kj = 0; kj < k; kj++) {
                     __m256 mat_vals = _mm256_loadu_ps(&matrix[i + ki][j + kj]);
-                    __m256 ker_vals = _mm256_loadu_ps(&kernel[ki][kj]);
-                    vec_sum = _mm256_add_ps(vec_sum, _mm256_mul_ps(mat_vals, ker_vals));
+                    __m256 ker_val = _mm256_set1_ps(kernel[ki][kj]);
+                    vec_sum = _mm256_fmadd_ps(mat_vals, ker_val, vec_sum);
                 }
+            }
 
-                // Reste des scalaires
-                for (; kj < k; kj++) {
+            _mm256_storeu_ps(&output[i][j], vec_sum);
+        }
+
+        // Colonnes restantes
+        for (; j < out_size; j++) {
+            float sum = 0.0f;
+            for (int ki = 0; ki < k; ki++) {
+                for (int kj = 0; kj < k; kj++) {
                     sum += matrix[i + ki][j + kj] * kernel[ki][kj];
                 }
             }
-
-            // Réduction finale des contributions SIMD
-            float tmp[8];
-            _mm256_storeu_ps(tmp, vec_sum);
-            for (int t = 0; t < 8; t++) {
-                sum += tmp[t];
-            }
-
             output[i][j] = sum;
         }
     }
-
 }
 
 
