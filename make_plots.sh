@@ -7,16 +7,22 @@ make >/dev/null
 
 sizes=(256 512 1024)
 k=3
+runs=3
 out_file="results.csv"
 
 # Write CSV header
-printf "size,version,time_ms\n" > "$out_file"
+printf "size,version,time_ms,std_ms\n" > "$out_file"
 
 for n in "${sizes[@]}"; do
   for v in r c s; do
-    line=$(./prog -$v $n $k | grep 'Average runtime')
-    time_ms=$(echo "$line" | awk '{print $(NF-1)}')
-    printf "%s,%s,%s\n" "$n" "$v" "$time_ms" >> "$out_file"
+    times=()
+    for ((i=0; i<runs; i++)); do
+      line=$(./prog -$v $n $k | grep 'Average runtime')
+      times+=("$(echo "$line" | awk '{print $(NF-1)}')")
+    done
+    mean=$(printf "%s\n" "${times[@]}" | awk '{s+=$1} END {print s/NR}')
+    std=$(printf "%s\n" "${times[@]}" | awk -v m="$mean" '{s+=($1-m)^2} END {print sqrt(s/NR)}')
+    printf "%s,%s,%.3f,%.3f\n" "$n" "$v" "$mean" "$std" >> "$out_file"
   done
 done
 
