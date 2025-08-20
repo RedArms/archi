@@ -1,6 +1,6 @@
 .RECIPEPREFIX = >
 CC=gcc
-CFLAGS=-O3 -mavx -std=c11 -Wall -Wextra
+CFLAGS=-O3 -march=native -std=c11 -Wall -Wextra
 OBJ=main.o matrix.o utils.o
 
 prog: $(OBJ)
