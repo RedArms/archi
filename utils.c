@@ -30,8 +30,8 @@ void clear_matrix(float** matrix, int n) {
     }
 }
 
-void benchmark(float** (*fun)(float**, float**,float**, int, int),
-               float** matrix, float** kernel,float** output,
+void benchmark(void (*fun)(float**, float**, float**, int, int),
+               float** matrix, float** kernel, float** output,
                int k, int out_size) {
     const int repeats = 5;
     double total_ms = 0.0;
@@ -40,7 +40,7 @@ void benchmark(float** (*fun)(float**, float**,float**, int, int),
         struct timespec start, end;
         clear_matrix(output, out_size);
         clock_gettime(CLOCK_MONOTONIC, &start);
-        output = fun(matrix, kernel, output, k, out_size);
+        fun(matrix, kernel, output, k, out_size);
         clock_gettime(CLOCK_MONOTONIC, &end);
         long seconds = end.tv_sec - start.tv_sec;
         long nanoseconds = end.tv_nsec - start.tv_nsec;
