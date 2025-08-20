@@ -31,6 +31,7 @@ void benchmark(void (*fun)(float*, float*, float*, int, int),
                float* matrix, float* kernel, float* output,
                int k, int out_size) {
     const int repeats = 5;
+    double times_ms[repeats];
     double total_ms = 0.0;
 
     for (int r = 0; r < repeats; r++) {
@@ -45,9 +46,23 @@ void benchmark(void (*fun)(float*, float*, float*, int, int),
             seconds--;
             nanoseconds += 1000000000L;
         }
-        total_ms += seconds * 1000.0 + nanoseconds / 1.0e6;
+        times_ms[r] = seconds * 1000.0 + nanoseconds / 1.0e6;
+        total_ms += times_ms[r];
     }
 
-    printf("Average runtime over %d runs: %.3f ms.\n",
-           repeats, total_ms / repeats);
+    double average = total_ms / repeats;
+    double variance = 0.0;
+    for (int r = 0; r < repeats; r++) {
+        double diff = times_ms[r] - average;
+        variance += diff * diff;
+    }
+    variance /= repeats;
+    double stddev = sqrt(variance);
+
+    printf("Average runtime over %d runs: %.3f ms\n", repeats, average);
+    printf("Standard deviation: %.3f ms\n", stddev);
+
+    double pixels = (double)out_size * out_size;
+    double throughput = pixels / (average / 1000.0);
+    printf("Throughput: %.2f pixels/s\n", throughput);
 }
