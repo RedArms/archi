@@ -15,7 +15,12 @@ with open(csv_path) as f:
     reader = csv.DictReader(f)
     for row in reader:
         size = int(row['size'])
-        data[size][row['version']] = float(row['time_ms'])
+        try:
+            time_ms = float(row['time_ms'])
+        except ValueError:
+            print(f"Warning: skipping row with non-numeric time_ms={row['time_ms']!r}", file=sys.stderr)
+            continue
+        data[size][row['version']] = time_ms
 
 sizes = sorted(data.keys())
 row = [data[n].get('r', 0) for n in sizes]
