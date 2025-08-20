@@ -100,57 +100,33 @@ float** convolve_col_major(float** matrix, float** kernel,float** output,
 
 float** convolve_simd(float** matrix, float** kernel,float** output,
                       int k,int out_size){
-
     for (int i = 0; i < out_size; i++) {
         for (int j = 0; j < out_size; j++) {
 
+            __m256 vec_sum = _mm256_setzero_ps();
             float sum = 0.0f;
 
             for (int ki = 0; ki < k; ki++) {
-
                 int kj = 0;
 
-                // SIMD - 8 float à la fois
+                // Charger et multiplier 8 éléments contigus à la fois
                 for (; kj <= k - 8; kj += 8) {
-                    // Charger 8 floats de la matrice (ligne non contiguë)
-                    __m256 mat_vals = _mm256_set_ps(
-                        matrix[i + ki][j + kj + 7],
-                        matrix[i + ki][j + kj + 6],
-                        matrix[i + ki][j + kj + 5],
-                        matrix[i + ki][j + kj + 4],
-                        matrix[i + ki][j + kj + 3],
-                        matrix[i + ki][j + kj + 2],
-                        matrix[i + ki][j + kj + 1],
-                        matrix[i + ki][j + kj + 0]
-                    );
-
-                    __m256 ker_vals = _mm256_set_ps(
-                        kernel[ki][kj + 7],
-                        kernel[ki][kj + 6],
-                        kernel[ki][kj + 5],
-                        kernel[ki][kj + 4],
-                        kernel[ki][kj + 3],
-                        kernel[ki][kj + 2],
-                        kernel[ki][kj + 1],
-                        kernel[ki][kj + 0]
-                    );
-
-                    // Multiplier
-                    __m256 prod = _mm256_mul_ps(mat_vals, ker_vals);
-
-                    // Réduction horizontale manuelle
-                    __m128 low = _mm256_castps256_ps128(prod);
-                    __m128 high = _mm256_extractf128_ps(prod, 1);
-                    __m128 sum128 = _mm_add_ps(low, high);
-                    sum128 = _mm_hadd_ps(sum128, sum128);
-                    sum128 = _mm_hadd_ps(sum128, sum128);
-                    sum += _mm_cvtss_f32(sum128);
+                    __m256 mat_vals = _mm256_loadu_ps(&matrix[i + ki][j + kj]);
+                    __m256 ker_vals = _mm256_loadu_ps(&kernel[ki][kj]);
+                    vec_sum = _mm256_add_ps(vec_sum, _mm256_mul_ps(mat_vals, ker_vals));
                 }
 
                 // Reste des scalaires
                 for (; kj < k; kj++) {
                     sum += matrix[i + ki][j + kj] * kernel[ki][kj];
                 }
+            }
+
+            // Réduction finale des contributions SIMD
+            float tmp[8];
+            _mm256_storeu_ps(tmp, vec_sum);
+            for (int t = 0; t < 8; t++) {
+                sum += tmp[t];
             }
 
             output[i][j] = sum;
