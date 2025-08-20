@@ -6,32 +6,29 @@
 
 #include "matrix.h"
 
-void print_matrix(float **matrix, int n) {
+void print_matrix(float *matrix, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            printf("%f ", matrix[i][j]);
+            printf("%f ", matrix[i * n + j]);
         }
         printf("\n");
     }
 }
 
-void free_matrix(float** matrix, int n) {
-    for (int i = 0; i < n; i++) {
-        free(matrix[i]);
-    }
+void free_matrix(float *matrix) {
     free(matrix);
 }
 
-void clear_matrix(float** matrix, int n) {
+void clear_matrix(float *matrix, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            matrix[i][j] = 0.0f;
+            matrix[i * n + j] = 0.0f;
         }
     }
 }
 
-void benchmark(void (*fun)(float**, float**, float**, int, int),
-               float** matrix, float** kernel, float** output,
+void benchmark(void (*fun)(float*, float*, float*, int, int),
+               float* matrix, float* kernel, float* output,
                int k, int out_size) {
     const int repeats = 5;
     double total_ms = 0.0;
