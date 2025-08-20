@@ -7,11 +7,19 @@
 #include "matrix.h"
 #include "utils.h"
 
+static void print_usage(void) {
+    fprintf(stderr, "Usage: ./prog [-r|-c|-s|-a] <size> <kernel> \n"
+                    " -r: Row-major convolution \n"
+                    " -c: Column-major convolution \n"
+                    " -s: SIMD convolution \n"
+                    " -a: All convolutions \n");
+    fprintf(stderr, "Example: ./prog -r 1024 3\n");
+}
+
 int main(int argc, char* argv[]) {
     srand(time(NULL));
     if (argc != 4) {
-        fprintf(stderr, "Usage: ./prog [-r|-c|-s|-a] <size> <kernel> \n -r: Row-major convolution \n -c: Column-major convolution \n -s: SIMD convolution \n -a: All convolutions \n");
-        fprintf(stderr, "Example: ./prog -r 1024 3\n");
+        print_usage();
         return 1;
     }
 
@@ -19,9 +27,7 @@ int main(int argc, char* argv[]) {
         strcmp(argv[1], "-c") != 0 &&
         strcmp(argv[1], "-s") != 0 &&
         strcmp(argv[1], "-a") != 0) {
-
-            fprintf(stderr, "Usage: ./prog [-r|-c|-s|-a] <size> <kernel> \n -r: Row-major convolution \n -c: Column-major convolution \n -s: SIMD convolution \n -a: All convolutions \n");
-            fprintf(stderr, "Example: ./prog -r 1024 3\n");
+            print_usage();
             return 1;
     }
 
@@ -91,8 +97,7 @@ int main(int argc, char* argv[]) {
                       matrix, kernel, output, k, out_size);
             break;
         default:
-                fprintf(stderr, "Usage: ./prog [-r|-c|-s|-a] <size> <kernel> \n -r: Row-major convolution \n -c: Column-major convolution \n -s: SIMD convolution \n -a: All convolutions \n");
-                fprintf(stderr, "Example: ./prog -r 1024 3\n");
+                print_usage();
                 free_matrix(matrix);
                 free_matrix(kernel);
                 free_matrix(output);
