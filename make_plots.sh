@@ -14,7 +14,7 @@ printf "size,version,time_ms\n" > "$out_file"
 
 for n in "${sizes[@]}"; do
   for v in r c s; do
-    line=$(./prog -$v $n $k | tail -n1)
+    line=$(./prog -$v $n $k | grep 'Average runtime')
     time_ms=$(echo "$line" | awk '{print $(NF-1)}')
     printf "%s,%s,%s\n" "$n" "$v" "$time_ms" >> "$out_file"
   done
