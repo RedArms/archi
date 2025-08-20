@@ -5,8 +5,8 @@ set -e
 make clean >/dev/null 2>&1 || true
 make >/dev/null
 
-sizes=(256 512 1024)
-k=3
+sizes=(256 512 1024 2048)
+k=8
 runs=3
 out_file="results.csv"
 
