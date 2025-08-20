@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <string.h>
 
 #include "matrix.h"
 
@@ -20,11 +21,7 @@ void free_matrix(float *matrix) {
 }
 
 void clear_matrix(float *matrix, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            matrix[i * n + j] = 0.0f;
-        }
-    }
+    memset(matrix, 0, n * n * sizeof(float));
 }
 
 void benchmark(void (*fun)(float*, float*, float*, int, int),
