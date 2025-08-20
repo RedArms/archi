@@ -7,8 +7,6 @@
 #include "matrix.h"
 #include "utils.h"
 
-struct timespec start, end;
-
 int main(int argc, char* argv[]) {
     srand(time(NULL));
     if (argc != 4) {
