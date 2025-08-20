@@ -57,8 +57,8 @@ float** kxk(int k) {
     return matrice;
 }
 
-float** convolve_row_major(float** matrix, float** kernel,float** output,
-                           int k,int out_size){
+void convolve_row_major(float** matrix, float** kernel, float** output,
+                        int k, int out_size){
     // Convolution (row-major)
     for (int i = 0; i < out_size; i++) {
         for (int j = 0; j < out_size; j++) {
@@ -74,12 +74,11 @@ float** convolve_row_major(float** matrix, float** kernel,float** output,
         }
     }
 
-    return output;
     }
 
 
-float** convolve_col_major(float** matrix, float** kernel,float** output,
-                           int k,int out_size){
+void convolve_col_major(float** matrix, float** kernel, float** output,
+                        int k, int out_size){
 
     // Convolution (col-major)
     for (int j = 0; j < out_size; j++) {
@@ -94,12 +93,11 @@ float** convolve_col_major(float** matrix, float** kernel,float** output,
             output[i][j] = sum;
         }
     }
-    return output;
     }
 
 
-float** convolve_simd(float** matrix, float** kernel,float** output,
-                      int k,int out_size){
+void convolve_simd(float** matrix, float** kernel, float** output,
+                   int k, int out_size){
 
     for (int i = 0; i < out_size; i++) {
         for (int j = 0; j < out_size; j++) {
@@ -157,7 +155,6 @@ float** convolve_simd(float** matrix, float** kernel,float** output,
         }
     }
 
-    return output;
 }
 
 
@@ -188,5 +185,4 @@ float** convolve_simd(float** matrix, float** kernel,float** output,
             output[i][j] = final_sum;
         }
     }
-    return output;
 */
