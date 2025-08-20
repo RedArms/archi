@@ -4,11 +4,20 @@
 #include <immintrin.h>
 
 float** nxn(int n) {
-
     float** matrice = malloc(n * sizeof(float*));
+    if (!matrice) {
+        return NULL;
+    }
 
     for (int i = 0; i < n; i++) {
         matrice[i] = malloc(n * sizeof(float));
+        if (!matrice[i]) {
+            for (int j = 0; j < i; j++) {
+                free(matrice[j]);
+            }
+            free(matrice);
+            return NULL;
+        }
     }
 
     for (int i = 0; i < n; i++) {
@@ -16,18 +25,27 @@ float** nxn(int n) {
             matrice[i][j] = rand() / (float)RAND_MAX;
         }
     }
+
     return matrice;
-
-
 }
 
 float** kxk(int k) {
-
     float** matrice = malloc(k * sizeof(float*));
+    if (!matrice) {
+        return NULL;
+    }
+
     float value = 1.0 / (k * k);
 
     for (int i = 0; i < k; i++) {
         matrice[i] = malloc(k * sizeof(float));
+        if (!matrice[i]) {
+            for (int j = 0; j < i; j++) {
+                free(matrice[j]);
+            }
+            free(matrice);
+            return NULL;
+        }
     }
 
     for (int i = 0; i < k; i++) {
@@ -35,9 +53,8 @@ float** kxk(int k) {
             matrice[i][j] = value;
         }
     }
+
     return matrice;
-
-
 }
 
 float** convolve_row_major(float** matrix, float** kernel,float** output,
