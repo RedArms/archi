@@ -55,24 +55,24 @@ int main(int argc, char* argv[]) {
     switch (argv[1][1]) {
         case 'r':
             printf("Benchmarking row-major convolution...\n");
-            benchmark(convolve_row_major, matrix, kernel, output, n, k, out_size);
+            benchmark(convolve_row_major, matrix, kernel, output, k, out_size);
             break;
         case 'c':
             printf("Benchmarking column-major convolution...\n");
-            benchmark(convolve_col_major, matrix, kernel, output, n, k, out_size);
+            benchmark(convolve_col_major, matrix, kernel, output, k, out_size);
             break;
         case 's':
             printf("Benchmarking SIMD convolution...\n");
-            benchmark(convolve_simd, matrix, kernel, output, n, k, out_size);
+            benchmark(convolve_simd, matrix, kernel, output, k, out_size);
             break;
         case 'a':
             printf("All convolutions will be benchmarked.\n");
             printf("Benchmarking row-major convolution...\n");
-            benchmark(convolve_row_major, matrix, kernel, output, n, k, out_size);
+            benchmark(convolve_row_major, matrix, kernel, output, k, out_size);
             printf("Benchmarking column-major convolution...\n");
-            benchmark(convolve_col_major, matrix, kernel, output, n, k, out_size);
+            benchmark(convolve_col_major, matrix, kernel, output, k, out_size);
             printf("Benchmarking SIMD convolution...\n");
-            benchmark(convolve_simd, matrix, kernel, output, n, k, out_size);
+            benchmark(convolve_simd, matrix, kernel, output, k, out_size);
             break;
         default:
                 fprintf(stderr, "Usage: ./prog [-r|-c|-s|-a] <size> <kernel> \n -r: Row-major convolution \n -c: Column-major convolution \n -s: SIMD convolution \n -a: All convolutions \n");
