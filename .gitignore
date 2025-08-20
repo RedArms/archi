@@ -1,0 +1,4 @@
+prog
+*.o
+*.png
+results.csv
