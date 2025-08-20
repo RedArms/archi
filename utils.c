@@ -44,6 +44,10 @@ void benchmark(float** (*fun)(float**, float**,float**, int, int),
         clock_gettime(CLOCK_MONOTONIC, &end);
         long seconds = end.tv_sec - start.tv_sec;
         long nanoseconds = end.tv_nsec - start.tv_nsec;
+        if (nanoseconds < 0) {
+            seconds--;
+            nanoseconds += 1000000000L;
+        }
         total_ms += seconds * 1000.0 + nanoseconds / 1.0e6;
     }
 
