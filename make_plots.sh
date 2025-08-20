@@ -15,6 +15,7 @@ for k in "${ks[@]}"; do
   echo "Kernel size k=$k"
   out_file="results_k${k}.csv"
   csv_files+=("$out_file")
+
   # Write CSV header
   printf "size,version,time_ms,std_ms\n" > "$out_file"
 
@@ -33,6 +34,5 @@ for k in "${ks[@]}"; do
       printf "%s,%s,%s,%s\n" "$n" "$v" "$mean" "$std" >> "$out_file"
     done
   done
-done
-
+  
 python3 plot_results.py "${csv_files[@]}"
